@@ -511,6 +511,9 @@ const char *hts_parse_reg(const char *str, int *beg, int *end);
     hts_itr_t *hts_itr_query(const hts_idx_t *idx, int tid, int beg, int end, hts_readrec_func *readrec);
     void hts_itr_destroy(hts_itr_t *iter);
 
+    /* Added by JK */
+    int hts_itr_next_chunk(hts_itr_t *iter, uint64_t *beg_off, uint64_t *end_off);
+
     typedef int (*hts_name2id_f)(void*, const char*);
     typedef const char *(*hts_id2name_f)(void*, int);
     typedef hts_itr_t *hts_itr_query_func(const hts_idx_t *idx, int tid, int beg, int end, hts_readrec_func *readrec);

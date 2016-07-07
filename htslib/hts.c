@@ -1829,6 +1829,19 @@ hts_itr_t *hts_itr_query(const hts_idx_t *idx, int tid, int beg, int end, hts_re
     return iter;
 }
 
+/* Added by JK */
+
+int hts_itr_next_chunk(hts_itr_t *iter, uint64_t *beg_off, uint64_t *end_off)
+{
+    /* if (iter->is_cram) return -1; // TODO return cram_itr_next_chunk(iter, beg_off, end_off); */
+
+    if (++iter->i >= iter->n_off) return -1;
+    *beg_off = iter->off[iter->i].u;
+    *end_off = iter->off[iter->i].v;
+    return 0;
+}
+
+
 void hts_itr_destroy(hts_itr_t *iter)
 {
     if (iter) { free(iter->off); free(iter->bins.a); free(iter); }

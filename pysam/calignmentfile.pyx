@@ -1114,6 +1114,49 @@ cdef class AlignmentFile:
             raise NotImplementedError(
                 "pileup of samfiles not implemented yet")
 
+    def get_file_offsets(self,
+              reference=None,
+              start=None,
+              end=None):
+        '''Experimental. JK '''
+
+        cdef int rtid, rstart, rend, has_coord, err
+        cdef hts_itr_t * iterator
+        cdef uint64_t beg_off, end_off
+        cdef c_array.array beg_off_array = c_array.array("L")
+        cdef c_array.array end_off_array = c_array.array("L")
+
+        if not self.is_open():
+            raise ValueError( "I/O operation on closed file" )
+
+        has_coord, rtid, rstart, rend = self.parse_region(
+            reference,
+            start,
+            end,
+            None,
+            None)
+
+        if not self.is_bam:
+            raise ValueError("Must be BAM.")
+        if not self.has_index():
+            raise ValueError("Must be indexed")
+
+        with nogil:
+            iterator = sam_itr_queryi(
+                self.index,
+                rtid,
+                rstart,
+                rend)
+        if iterator == NULL:
+            raise ValueError("Error creating iterator")
+        
+        # TODO this doesn't do any error checking...
+        while hts_itr_next_chunk(iterator, &beg_off, &end_off) >= 0:
+            # Right shift by 16 bits to get the file offset.
+            beg_off_array.append(beg_off >> 16)
+            end_off_array.append(end_off >> 16)
+        return beg_off_array, end_off_array
+
     def count(self,
               reference=None,
               start=None,

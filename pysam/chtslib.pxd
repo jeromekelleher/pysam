@@ -653,6 +653,9 @@ cdef extern from "htslib/hts.h" nogil:
     #    @return  Pointer to the colon or '\0' after the reference sequence name,
     #             or NULL if @a str could not be parsed.
     const char *hts_parse_reg(const char *str, int *beg, int *end)
+    
+    # Added by JK
+    int hts_itr_next_chunk(hts_itr_t *iter, uint64_t *beg_off, uint64_t *end_off);
 
     hts_itr_t *hts_itr_query(const hts_idx_t *idx, int tid, int beg, int end, hts_readrec_func *readrec)
     void hts_itr_destroy(hts_itr_t *iter)
